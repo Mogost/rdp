@@ -68,9 +68,10 @@ jobs:
           use-cross: ${{ matrix.use-cross }}
           command: build
           args: --release --target=${{ matrix.target }} --features headers
-      - name: Release
-        uses: actions/upload-artifact@v3
-        with:
-          name: xxx
-          path: target/
+      - run: sudo apt install tree && tree ./target
+#       - name: Release
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: xxx
+#           path: target/
    
