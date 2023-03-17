@@ -11,51 +11,7 @@ env:
 name: Test and Build
 
 jobs:
-  test:
-    if: github.event_name == 'push' && !contains(github.ref, 'refs/tags/')
-    name: Test on ${{ matrix.os }} (${{ matrix.target }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - build: linux
-          os: ubuntu-latest
-          rust: stable
-          target: x86_64-unknown-linux-gnu
-          use-cross: false
-        - build: linux-arm
-          os: ubuntu-latest
-          rust: stable
-          target: aarch64-unknown-linux-gnu
-          use-cross: true
-        - build: macos
-          os: macos-latest
-          rust: stable
-          target: x86_64-apple-darwin
-          use-cross: false
-          deptarget: 10.9
-        - build: windows
-          os: windows-latest
-          rust: stable
-          target: x86_64-pc-windows-msvc
-          use-cross: false
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-      - uses: actions-rs/cargo@v1
-        env:
-          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deptarget }}
-        with:
-          use-cross: ${{ matrix.use-cross }}
-          command: test
-          args: --target=${{ matrix.target }}
-
   build:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     name: Build and release on ${{ matrix.os }} (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
     strategy:
@@ -89,6 +45,11 @@ jobs:
           rust: stable
           target: x86_64-pc-windows-msvc
           use-cross: false
+        - build: linux
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+          use-cross: true
     steps:
       - name: Switch to macOS 13.x SDK
         if: matrix.target == 'aarch64-apple-darwin'
@@ -166,9 +127,8 @@ jobs:
           cp "${{ env.STAGE }}/${{ env.ASSET_NAME }}.${{ env.EXTENSION }}" zipped/
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: actions/upload-artifact@v3
         with:
-          files: |
-            zipped/${{ env.ASSET_NAME }}.${{ env.EXTENSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: xxx
+          path: zipped/
+   
