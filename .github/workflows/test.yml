@@ -66,6 +66,9 @@ jobs:
           use-cross: ${{ matrix.use-cross }}
           command: build
           args: --release --target=${{ matrix.target }} --features headers
+      - name: A
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install gcc-aarch64-linux-gnu qemu-system-arm
       - name: Gather Assets
         run: |
           src=$(pwd)
